@@ -16,16 +16,29 @@ import seaborn as sns
 warnings.filterwarnings('ignore')
 
 # =========================
-# 修复字体配置
+# 完全兼容的字体配置 - 适用于Streamlit Cloud
 # =========================
 def setup_font():
-    """配置中文字体支持"""
+    """配置字体支持 - 完全兼容Streamlit Cloud"""
     try:
-        # 设置支持中文的字体
-        plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans', 'Arial Unicode MS', 'Arial']
-        plt.rcParams['axes.unicode_minus'] = False
+        # 清除所有字体缓存
+        matplotlib.font_manager._rebuild()
+        
+        # 使用最基本的字体设置
+        plt.rcParams.update({
+            'font.family': 'sans-serif',
+            'font.sans-serif': ['DejaVu Sans', 'Arial', 'Liberation Sans', 'sans-serif'],
+            'axes.unicode_minus': False,
+            'font.size': 10,
+            'axes.titlesize': 12,
+            'axes.labelsize': 10,
+            'xtick.labelsize': 9,
+            'ytick.labelsize': 9,
+            'legend.fontsize': 9
+        })
         return True
     except:
+        # 如果字体设置失败，使用默认设置
         return False
 
 # 初始化字体
@@ -37,343 +50,358 @@ setup_font()
 
 def main():
     st.set_page_config(
-        page_title="微生物水质预测分析系统",
+        page_title="Microbial Water Quality Prediction System",
         page_icon="🌊",
         layout="wide",
         initial_sidebar_state="expanded"
     )
 
-    st.title("🌊 微生物指标预测水质指标模型开发系统")
+    st.title("🌊 Microbial Water Quality Prediction System")
     st.markdown("---")
 
     # 侧边栏功能选择
-    st.sidebar.header("🔧 功能模块")
+    st.sidebar.header("🔧 Function Modules")
 
     # 功能选择按钮
-    if st.sidebar.button("📈 时序分析", use_container_width=True):
-        st.session_state.current_function = "时序分析"
+    if st.sidebar.button("📈 Temporal Analysis", use_container_width=True):
+        st.session_state.current_function = "Temporal Analysis"
     
-    if st.sidebar.button("🔗 多模态分析", use_container_width=True):
-        st.session_state.current_function = "多模态分析"
+    if st.sidebar.button("🔗 Multimodal Analysis", use_container_width=True):
+        st.session_state.current_function = "Multimodal Analysis"
     
-    if st.sidebar.button("🤖 机器学习建模", use_container_width=True):
-        st.session_state.current_function = "机器学习建模"
+    if st.sidebar.button("🤖 Machine Learning", use_container_width=True):
+        st.session_state.current_function = "Machine Learning"
     
-    if st.sidebar.button("🔬 特征重要性分析", use_container_width=True):
-        st.session_state.current_function = "特征重要性分析"
+    if st.sidebar.button("🔬 Feature Importance", use_container_width=True):
+        st.session_state.current_function = "Feature Importance"
     
-    if st.sidebar.button("🔮 时间序列预测", use_container_width=True):
-        st.session_state.current_function = "时间序列预测"
+    if st.sidebar.button("🔮 Time Series Forecast", use_container_width=True):
+        st.session_state.current_function = "Time Series Forecast"
     
-    if st.sidebar.button("📊 风险趋势分析", use_container_width=True):
-        st.session_state.current_function = "风险趋势分析"
+    if st.sidebar.button("📊 Risk Trend Analysis", use_container_width=True):
+        st.session_state.current_function = "Risk Trend Analysis"
 
     # 初始化会话状态
     if 'current_function' not in st.session_state:
-        st.session_state.current_function = "时序分析"
+        st.session_state.current_function = "Temporal Analysis"
 
     # 显示当前功能说明
-    st.header(f"📋 {st.session_state.current_function} 功能展示")
+    st.header(f"📋 {st.session_state.current_function} Demo")
 
     # 各功能模块的展示内容
-    if st.session_state.current_function == "时序分析":
+    if st.session_state.current_function == "Temporal Analysis":
         show_temporal_analysis()
     
-    elif st.session_state.current_function == "多模态分析":
+    elif st.session_state.current_function == "Multimodal Analysis":
         show_multimodal_analysis()
     
-    elif st.session_state.current_function == "机器学习建模":
+    elif st.session_state.current_function == "Machine Learning":
         show_machine_learning()
     
-    elif st.session_state.current_function == "特征重要性分析":
+    elif st.session_state.current_function == "Feature Importance":
         show_feature_importance()
     
-    elif st.session_state.current_function == "时间序列预测":
+    elif st.session_state.current_function == "Time Series Forecast":
         show_time_series_forecast()
     
-    elif st.session_state.current_function == "风险趋势分析":
+    elif st.session_state.current_function == "Risk Trend Analysis":
         show_risk_trend_analysis()
 
     # 系统信息
     st.sidebar.markdown("---")
     st.sidebar.info("""
-    **系统功能概览**
-    - 📈 时序动态监测
-    - 🔗 多源数据融合  
-    - 🤖 智能模型预测
-    - 🔬 深度特征解析
-    - 🔮 趋势预测预警
-    - 📊 风险评估管理
+    **System Features**
+    - 📈 Temporal Dynamics Monitoring
+    - 🔗 Multi-source Data Fusion  
+    - 🤖 Intelligent Model Prediction
+    - 🔬 Deep Feature Analysis
+    - 🔮 Trend Prediction & Warning
+    - 📊 Risk Assessment Management
     """)
 
 # =========================
-# 各功能展示函数
+# 各功能展示函数 - 使用简单图表避免字体问题
 # =========================
+
+def create_simple_figure():
+    """创建简单的图表，避免字体问题"""
+    fig, ax = plt.subplots()
+    # 使用最基本的设置
+    ax.grid(True, alpha=0.3)
+    return fig, ax
 
 def show_temporal_analysis():
     """时序分析功能展示"""
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("🔄 微生物群落时序动态")
+        st.subheader("🔄 Microbial Community Dynamics")
         st.markdown("""
-        **核心功能：**
-        - 物种丰富度变化追踪
-        - 群落稳定性指数计算
-        - 关键OTU轨迹分析
-        - 时间趋势可视化
+        **Core Functions:**
+        - Species richness tracking
+        - Community stability calculation
+        - Key OTU trajectory analysis
+        - Time trend visualization
         """)
         
-        # 模拟图表展示
-        fig, ax = plt.subplots(figsize=(10, 6))
-        time_points = range(1, 13)  # 12个月
-        richness = [50, 55, 52, 58, 60, 62, 65, 63, 68, 70, 72, 75]  # 12个数据点
-        ax.plot(time_points, richness, 'b-o', linewidth=2)
-        ax.set_xlabel('时间 (月)', fontsize=12)
-        ax.set_ylabel('物种丰富度', fontsize=12)
-        ax.set_title('物种丰富度时序变化', fontsize=14, fontweight='bold')
-        ax.grid(True, alpha=0.3)
+        # 使用简单图表
+        fig, ax = create_simple_figure()
+        time_points = range(1, 13)
+        richness = [50, 55, 52, 58, 60, 62, 65, 63, 68, 70, 72, 75]
+        ax.plot(time_points, richness, 'b-o', linewidth=2, markersize=4)
+        ax.set_xlabel('Time (Months)')
+        ax.set_ylabel('Species Richness')
+        ax.set_title('Temporal Changes in Species Richness')
         st.pyplot(fig)
     
     with col2:
-        st.subheader("📊 动态指标")
-        st.metric("平均丰富度", "62.5", "↑ 12.5%")
-        st.metric("稳定性指数", "0.85", "↑ 0.05")
-        st.metric("变化趋势", "上升", "积极")
+        st.subheader("📊 Dynamic Metrics")
+        st.metric("Average Richness", "62.5", "+12.5%")
+        st.metric("Stability Index", "0.85", "+0.05")
+        st.metric("Trend", "Increasing", "Positive")
 
 def show_multimodal_analysis():
     """多模态分析功能展示"""
-    st.subheader("🌐 多源数据融合分析")
+    st.subheader("🌐 Multi-source Data Integration")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        **数据整合：**
-        - 微生物群落数据
-        - 理化指标数据
-        - 气象环境数据
-        - 时空关联分析
+        **Data Integration:**
+        - Microbial community data
+        - Physicochemical indicators
+        - Meteorological data
+        - Spatiotemporal analysis
         """)
         
         st.info("""
-        **支持的数据类型：**
-        - OTU丰度矩阵
-        - pH、DO、COD等理化指标
-        - 温度、降水、湿度等气象数据
+        **Supported Data Types:**
+        - OTU abundance matrix
+        - pH, DO, COD, etc.
+        - Temperature, precipitation, humidity
         """)
     
     with col2:
         st.markdown("""
-        **分析能力：**
-        - 跨模态相关性分析
-        - 特征交互网络
-        - 多维度关联挖掘
-        - 综合指标计算
+        **Analysis Capabilities:**
+        - Cross-modal correlation
+        - Feature interaction networks
+        - Multi-dimensional association
+        - Comprehensive metrics
         """)
         
-        # 模拟相关性矩阵
-        fig, ax = plt.subplots(figsize=(8, 6))
-        features = ['pH', 'DO', '温度', 'OTU1', 'OTU2', 'OTU3']
+        # 简单的相关性矩阵
+        fig, ax = create_simple_figure()
+        features = ['pH', 'DO', 'Temp', 'OTU1', 'OTU2', 'OTU3']
         corr_matrix = np.random.uniform(-0.8, 0.8, (6, 6))
         np.fill_diagonal(corr_matrix, 1)
         
-        sns.heatmap(corr_matrix, annot=True, cmap='RdBu_r', center=0,
-                   xticklabels=features, yticklabels=features, ax=ax)
-        ax.set_title('多模态特征相关性', fontsize=14, fontweight='bold')
-        plt.xticks(rotation=45)
-        plt.yticks(rotation=0)
+        # 使用seaborn但简化设置
+        sns.heatmap(corr_matrix, cmap='RdBu_r', center=0,
+                   xticklabels=features, yticklabels=features, ax=ax,
+                   cbar_kws={'shrink': 0.8})
+        ax.set_title('Feature Correlation Matrix')
+        plt.tight_layout()
         st.pyplot(fig)
 
 def show_machine_learning():
     """机器学习建模功能展示"""
-    st.subheader("🧠 智能预测模型")
+    st.subheader("🧠 Intelligent Prediction Models")
     
-    tab1, tab2, tab3 = st.tabs(["模型类型", "性能指标", "混淆矩阵"])
+    tab1, tab2, tab3 = st.tabs(["Model Types", "Performance", "Confusion Matrix"])
     
     with tab1:
         st.markdown("""
-        **支持的算法：**
-        - 📊 逻辑回归 (LR)
-        - 🔍 支持向量机 (SVM)
-        - 🌳 随机森林 (RF)
-        - 🔄 OneVsRest多分类
+        **Supported Algorithms:**
+        - Logistic Regression (LR)
+        - Support Vector Machine (SVM)
+        - Random Forest (RF)
+        - OneVsRest Multi-class
         """)
         
         col1, col2 = st.columns(2)
         with col1:
-            st.selectbox("选择模型", ['LR', 'SVML', 'SVMRBF', 'RF'], index=0)
-            st.checkbox("使用SMOTE过采样", value=True)
+            st.selectbox("Select Model", ['LR', 'SVML', 'SVMRBF', 'RF'], index=0)
+            st.checkbox("Apply SMOTE", value=True)
         
         with col2:
-            st.slider("交叉验证折数", 2, 10, 5)
-            st.slider("测试集比例", 0.1, 0.5, 0.3)
+            st.slider("CV Folds", 2, 10, 5)
+            st.slider("Test Size", 0.1, 0.5, 0.3)
     
     with tab2:
-        # 模拟性能表格
+        # 性能表格
         performance_data = {
-            '模型': ['LR', 'SVM线性', 'SVM径向基', '随机森林'],
-            '准确率': [0.85, 0.88, 0.92, 0.94],
+            'Model': ['LR', 'SVM Linear', 'SVM RBF', 'Random Forest'],
+            'Accuracy': [0.85, 0.88, 0.92, 0.94],
             'AUC': [0.89, 0.91, 0.95, 0.96],
-            'F1分数': [0.84, 0.87, 0.91, 0.93]
+            'F1 Score': [0.84, 0.87, 0.91, 0.93]
         }
-        st.dataframe(pd.DataFrame(performance_data))
+        st.dataframe(pd.DataFrame(performance_data), use_container_width=True)
     
     with tab3:
-        # 模拟混淆矩阵
-        fig, ax = plt.subplots(figsize=(6, 5))
-        classes = ['清洁', '轻度污染', '重度污染']
+        # 简单的混淆矩阵
+        fig, ax = create_simple_figure()
+        classes = ['Clean', 'Light', 'Heavy']
         cm = np.array([[25, 2, 1], [1, 28, 3], [0, 1, 29]])
+        
+        # 简化热图设置
         sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                   xticklabels=classes, yticklabels=classes, ax=ax)
-        ax.set_title('混淆矩阵示例', fontsize=14, fontweight='bold')
-        ax.set_xlabel('预测标签', fontsize=12)
-        ax.set_ylabel('真实标签', fontsize=12)
+                   xticklabels=classes, yticklabels=classes, ax=ax,
+                   cbar_kws={'shrink': 0.8})
+        ax.set_title('Confusion Matrix')
+        ax.set_xlabel('Predicted')
+        ax.set_ylabel('Actual')
         st.pyplot(fig)
 
 def show_feature_importance():
     """特征重要性分析功能展示"""
-    st.subheader("🔍 深度特征解析")
+    st.subheader("🔍 Deep Feature Analysis")
     
     col1, col2 = st.columns([3, 2])
     
     with col1:
-        # 模拟特征重要性图
-        fig, ax = plt.subplots(figsize=(10, 8))
+        # 简单的特征重要性图
+        fig, ax = create_simple_figure()
         features = [f'OTU_{i}' for i in range(1, 11)]
         importance = np.random.uniform(0.05, 0.2, 10)
         
         y_pos = np.arange(len(features))
-        ax.barh(y_pos, importance, color='steelblue', alpha=0.8)
+        bars = ax.barh(y_pos, importance, color='steelblue', alpha=0.8, height=0.6)
         ax.set_yticks(y_pos)
-        ax.set_yticklabels(features, fontsize=10)
-        ax.set_xlabel('特征重要性', fontsize=12)
-        ax.set_title('Top 10 重要OTU特征', fontsize=14, fontweight='bold')
+        ax.set_yticklabels(features)
+        ax.set_xlabel('Importance Score')
+        ax.set_title('Top 10 Important Features')
         ax.invert_yaxis()
-        ax.grid(True, alpha=0.3, axis='x')
         st.pyplot(fig)
     
     with col2:
         st.markdown("""
-        **分析方法：**
-        - SHAP值分析
-        - LR系数权重
-        - Log2比值计算
-        - 统计显著性检验
-        - 多重比较校正
+        **Analysis Methods:**
+        - SHAP value analysis
+        - LR coefficient weights
+        - Log2 ratio calculation
+        - Statistical significance
+        - Multiple testing correction
         """)
         
         st.success("""
-        **输出结果：**
-        - 特征重要性排名
-        - 交互作用网络
-        - 生物标志物识别
-        - 可解释性分析
+        **Output Results:**
+        - Feature importance ranking
+        - Interaction networks
+        - Biomarker identification
+        - Interpretability analysis
         """)
 
 def show_time_series_forecast():
     """时间序列预测功能展示"""
-    st.subheader("📈 未来趋势预测")
+    st.subheader("📈 Future Trend Prediction")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        # 模拟预测图
-        fig, ax = plt.subplots(figsize=(12, 6))
+        # 简单的时间序列图
+        fig, ax = create_simple_figure()
         
-        # 修复：确保数据维度一致
-        # 历史数据 - 12个月
-        history_dates = pd.date_range('2023-01-01', periods=12, freq='M')
+        # 历史数据
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         history_values = np.random.normal(0.3, 0.05, 12) + np.linspace(0, 0.1, 12)
         
-        # 预测数据 - 6个月
-        forecast_dates = pd.date_range('2024-01-01', periods=6, freq='M')
+        # 预测数据
+        future_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
         forecast_values = np.random.normal(0.4, 0.03, 6)
         
-        # 验证数据维度
-        st.write(f"历史数据维度: {len(history_dates)} 个时间点, {len(history_values)} 个值")
-        st.write(f"预测数据维度: {len(forecast_dates)} 个时间点, {len(forecast_values)} 个值")
+        # 使用月份名称而不是日期对象
+        all_months = months + future_months
+        all_values = list(history_values) + list(forecast_values)
         
-        ax.plot(history_dates, history_values, 'b-o', label='历史数据', linewidth=2)
-        ax.plot(forecast_dates, forecast_values, 'r--o', label='ARIMA预测', linewidth=2)
-        ax.axhline(y=0.35, color='red', linestyle=':', alpha=0.7, label='风险阈值')
+        ax.plot(range(len(months)), history_values, 'b-o', label='Historical', linewidth=2, markersize=4)
+        ax.plot(range(len(months), len(all_months)), forecast_values, 'r--o', label='Forecast', linewidth=2, markersize=4)
+        ax.axhline(y=0.35, color='red', linestyle=':', alpha=0.7, label='Risk Threshold')
         
-        ax.set_xlabel('时间', fontsize=12)
-        ax.set_ylabel('污染风险比例', fontsize=12)
-        ax.set_title('水质风险趋势预测', fontsize=14, fontweight='bold')
-        ax.legend(fontsize=10)
-        ax.grid(True, alpha=0.3)
-        plt.xticks(rotation=45)
+        # 设置x轴标签
+        ax.set_xticks(range(len(all_months)))
+        ax.set_xticklabels(all_months, rotation=45)
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Risk Ratio')
+        ax.set_title('Risk Trend Prediction')
+        ax.legend()
         st.pyplot(fig)
     
     with col2:
         st.markdown("""
-        **预测方法：**
-        - ARIMA模型
-        - 移动平均法
-        - 指数平滑
-        - Prophet算法
+        **Prediction Methods:**
+        - ARIMA model
+        - Moving average
+        - Exponential smoothing
+        - Prophet algorithm
         """)
         
         st.warning("""
-        **预警信息：**
-        - 高风险时段检测
-        - 趋势变化预警
-        - 异常波动提醒
+        **Warning Information:**
+        - High-risk period detection
+        - Trend change alerts
+        - Anomaly detection
         """)
         
-        st.metric("预测准确率", "89.2%", "↑ 2.1%")
-        st.metric("预警提前量", "15天", "↑ 3天")
+        st.metric("Prediction Accuracy", "89.2%", "+2.1%")
+        st.metric("Early Warning", "15 days", "+3 days")
 
 def show_risk_trend_analysis():
     """风险趋势分析功能展示"""
-    st.subheader("⚠️ 风险评估与管理")
+    st.subheader("⚠️ Risk Assessment & Management")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("当前风险等级", "中等", "稳定")
-        st.metric("风险趋势", "上升", "+0.05")
+        st.metric("Current Risk Level", "Medium", "Stable")
+        st.metric("Risk Trend", "Increasing", "+0.05")
     
     with col2:
-        st.metric("预警天数", "12天", "↑ 2天")
-        st.metric("置信度", "92%", "↑ 3%")
+        st.metric("Warning Days", "12 days", "+2 days")
+        st.metric("Confidence", "92%", "+3%")
     
     with col3:
-        st.metric("关键指标", "OTU_157", "高风险")
-        st.metric("影响程度", "高", "↑")
+        st.metric("Key Indicator", "OTU_157", "High Risk")
+        st.metric("Impact Level", "High", "↑")
     
-    # 风险分布图
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    # 简单的风险分布图
+    col1, col2 = st.columns(2)
     
-    # 风险等级分布
-    risk_levels = ['低风险', '中风险', '高风险']
-    risk_counts = [25, 15, 8]
-    colors = ['green', 'orange', 'red']
-    ax1.bar(risk_levels, risk_counts, color=colors, alpha=0.8)
-    ax1.set_title('风险等级分布', fontsize=14, fontweight='bold')
-    ax1.set_ylabel('样本数量', fontsize=12)
+    with col1:
+        fig, ax = create_simple_figure()
+        risk_levels = ['Low', 'Medium', 'High']
+        risk_counts = [25, 15, 8]
+        colors = ['green', 'orange', 'red']
+        bars = ax.bar(risk_levels, risk_counts, color=colors, alpha=0.8)
+        ax.set_title('Risk Level Distribution')
+        ax.set_ylabel('Sample Count')
+        # 在柱子上添加数值
+        for bar, count in zip(bars, risk_counts):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5,
+                   str(count), ha='center', va='bottom')
+        st.pyplot(fig)
     
-    # 时间风险趋势 - 修复维度问题
-    months = ['1月', '2月', '3月', '4月', '5月', '6月']  # 6个月
-    risk_scores = [0.2, 0.25, 0.3, 0.35, 0.4, 0.45]  # 6个值
-    ax2.plot(months, risk_scores, 'r-o', linewidth=2)
-    ax2.axhline(y=0.3, color='red', linestyle='--', alpha=0.7, label='阈值')
-    ax2.fill_between(months, risk_scores, 0.3, where=np.array(risk_scores) > 0.3, 
-                    color='red', alpha=0.3, label='高风险区域')
-    ax2.set_title('月度风险趋势', fontsize=14, fontweight='bold')
-    ax2.set_ylabel('风险评分', fontsize=12)
-    ax2.legend(fontsize=10)
-    ax2.grid(True, alpha=0.3)
-    
-    st.pyplot(fig)
+    with col2:
+        fig, ax = create_simple_figure()
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        risk_scores = [0.2, 0.25, 0.3, 0.35, 0.4, 0.45]
+        ax.plot(months, risk_scores, 'r-o', linewidth=2, markersize=4)
+        ax.axhline(y=0.3, color='red', linestyle='--', alpha=0.7, label='Threshold')
+        ax.fill_between(months, risk_scores, 0.3, where=np.array(risk_scores) > 0.3, 
+                       color='red', alpha=0.1, label='High Risk')
+        ax.set_title('Monthly Risk Trend')
+        ax.set_ylabel('Risk Score')
+        ax.legend()
+        st.pyplot(fig)
     
     st.info("""
-    **风险管理功能：**
-    - 实时风险监测
-    - 趋势预测预警
-    - 关键因子识别
-    - 防控建议生成
+    **Risk Management Functions:**
+    - Real-time risk monitoring
+    - Trend prediction & warnings
+    - Key factor identification
+    - Prevention recommendations
     """)
 
 if __name__ == "__main__":
