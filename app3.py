@@ -380,7 +380,7 @@ def show_risk_trend_analysis():
         ax.plot(months, risk_scores, 'r-o', linewidth=2, markersize=4)
         ax.axhline(y=0.3, color='red', linestyle='--', alpha=0.7, label='Threshold')
         ax.fill_between(months, risk_scores, 0.3, where=np.array(risk_scores) > 0.3, 
-                       color='red', alpha=0.1, label='High Risk')
+                       color='red', alpha=0.1, label='High Risk') color='red', alpha=0.1, label='高风险')
         ax.set_title('Monthly Risk Trend')
         ax.set_ylabel('Risk Score')
         ax.legend()
@@ -388,12 +388,15 @@ def show_risk_trend_analysis():
     
     st.info("""
     **Risk Management Functions:**
-    - Real-time risk monitoring
-    - Trend prediction & warnings
-    - Key factor identification
-    - Prevention recommendations
+        - Real-time risk monitoring
+- 实时风险监控
+        - Trend prediction & warnings
+- 关键因素识别
+        - Key factor identification
+        - Prevention recommendations
     """)
 
 if __name__ == "__main__":
 
     main()
+
